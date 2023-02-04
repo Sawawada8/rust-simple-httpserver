@@ -1,5 +1,6 @@
 
 pub fn handle() {
+    demo();
     println!("handle");
 }
 
