@@ -22,8 +22,11 @@ fn main() -> std::io::Result<()> {
 
     // read
     // readが思ったようにできないが、serverから返していいないから？
-    read(&mut stream);
-    // read_byte(&mut stream);
+    // tcp は基本的に一方向？
+    // http がresponse 返すのは、相互でtcp が実装されているから?
+    // じゃなくて、サーバーのread がよくなかった
+    // read(&mut stream);
+    read_byte(&mut stream);
 
 
 
@@ -37,10 +40,9 @@ fn write(stream: &mut TcpStream) -> &mut TcpStream {
     let request_text = String::from("request text").into_bytes();
     if let Ok(result) = stream.write(&request_text) {
         println!("write OK : {:?}", result);
-        stream
-    } else {
-        stream
     }
+    // stream.flush().unwrap();
+    stream
 }
 
 fn read(stream: &mut TcpStream) {
@@ -59,8 +61,11 @@ fn read(stream: &mut TcpStream) {
 }
 
 fn read_byte(stream: &mut TcpStream) {
-    let reader = BufReader::new(stream);
-    let bytes = reader.buffer();
-    let converted: String = String::from_utf8(bytes.to_vec()).unwrap();
-    println!("response: {:?}", converted);
+    // let reader = BufReader::new(stream);
+    // let bytes = reader.buffer();
+    // let converted: String = String::from_utf8(bytes.to_vec()).unwrap();
+    // let converted: String = String::from_utf8_lossy(&bytes.to_vec());
+    let mut b = [0; 1024];
+    stream.read(&mut b).unwrap();
+    println!("response: {:?}", String::from_utf8_lossy(&b[..]));
 }
